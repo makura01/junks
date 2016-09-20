@@ -1,0 +1,15 @@
+2016/08/26
+friday
+
+wakeup->11:00
+study-> 12:20 ~
+
+#lisp
+#fp
+
+最近haskellも微妙にやりたいなあと思ったりするけど、
+暫くはlispを根気よく続けていくことに価値があると思う。
+
+token n. a textual representation for a number or a symbol.
+
+gauche-> (load "./function.scm") でうまくロードできる

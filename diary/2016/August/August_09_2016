@@ -1,0 +1,20 @@
+2016/08/09
+tuesday
+
+11時起床
+
+12:30 ~ スタバで作業開始
+・python
+・c言語
+
+shell->while [ -z str ]
+はtestが省略されている。
+よってtest -zと同値
+
+17:00~
+awkとsyell script->とにかく手を動かしたい。 
+早速忘れてたww
+grep -e pattern -r file name
+で検索できまする。。
+man使いこなせればすごく便利かも。
+perl->perl -(l)e 'command' one liner
