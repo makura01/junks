@@ -1,0 +1,16 @@
+grep -rn [pattern] [object]
+  > 再帰を意味するrをつけることで、ディレクトリ検索ができる
+  ex) grep -rn 'tuesday' .
+
+ps aux | grep [pattern]
+  > 特定のプロセスのPID, USERname, STAT(statud)などを確認する
+  ex) ps aux | grep apache
+
+git log -n 1 -p
+  > 最新のコミットのログを開く
+
+ls -l | wc -l
+  > ファイルの数を検索する
+
+head /dev/urandom | shasum |cut -f 1 -d ' '
+  > ランダム文字列を作成

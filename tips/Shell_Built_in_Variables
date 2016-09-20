@@ -1,0 +1,17 @@
+$# >>>
+Number of command line arguments. Useful to test no. of command line args in shell script.
+
+$* >>>
+All arguments to shell
+
+$@ >>>
+Same as above
+
+$- >>>
+Option supplied to shell
+
+$$ >>>
+PID of shell
+
+$! >>>
+PID of last started background process (started with &)
