@@ -1,6 +1,7 @@
 grep -rn [pattern] [object]
   > 再帰を意味するrをつけることで、ディレクトリ検索ができる
   ex) grep -rn 'tuesday' .
+  | で wc -l をつけてもいいかも
 
 ps aux | grep [pattern]
   > 特定のプロセスのPID, USERname, STAT(statud)などを確認する
