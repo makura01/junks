@@ -10,8 +10,14 @@ ps aux | grep [pattern]
 git log -n 1 -p
   > 最新のコミットのログを開く
 
+git log -stat
+  > 直近のログを視覚的にわかりやすく表現
+
 ls -l | wc -l
   > ファイルの数を検索する
 
 head /dev/urandom | shasum |cut -f 1 -d ' '
   > ランダム文字列を作成
+
+grep -A (行数) "target(literal...)" < source.f > result.f 
+  > マッチした行から何行目か内容を読み込み、(fileに)書き込む    > もう少し汎用性を持たせたい
