@@ -122,9 +122,36 @@ type()
      print_kwargs(wine='merlot', entree='mutton', dessert='macaroon')
      => Keyword arguments: {'dessert': 'macaroon', 'wine': 'merlot', 'entree': 'mutton'}
      argsと同様にkwargsを慣習的に使うらしい。
+   一人前のオブジェクトとしての関数
+     関数はオブジェクトとして、変数に関数を代入したり、ほかの関数の引数として関数を使ったり、
+     関数からの戻り値として関数を返したりできる。
+     
+     def answer():
+       print(42)
+     
+     def run_something (func):
+       func()
+     
+     run_somethingu(answer) => 42
 
+   関数内関数
 
+   クロージャ
+     うーん、よくわからん
+   
+   無名関数：ラムダ関数
+     うーん、よくわからん
+   => あとでリサーチして、記事にまとめる
+   
+ ジェネレーター
 
-4章けっこうボリュームあるから、少しずつ分けて、取り組むことにした。
+ デコレーター
+
+難しくなってきた。
+特に、クロージャー、ラムダ関数、ジェネレーター、デコレーターの部分は、
+復習必要。
+
+4章、最後らへん飛ばしてしまった。
+
 
 
