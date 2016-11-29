@@ -1,0 +1,20 @@
+アプリケーションの作成
+rails new appName [options]
+
+HTTPサーバ
+railsには予めWEBrickという簡易なHTTPサーバがあるため、開発用途であればWEBrickを使えればいい。
+
+コントローラクラスの生成
+rails g controller name [options]
+
+ファイルはUTF-8で保存する
+マジックコメントを指定する # coding: utf-8
+
+ApplicationControllerクラスを継承する
+自動生成されたクラスでは既に継承されている。
+
+具体的な処理を実装するのはアクションメソッド
+コントローラークラスには、ひとつ以上のアクションメソッドを含むことができる。
+
+render メソッド
+rander text: value

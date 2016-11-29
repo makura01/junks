@@ -1,0 +1,83 @@
+==========
+「プログラミング言語Ruby」
+==========
+
+イテーレター
+  数値イテレータ
+    y.upto(x){|x| print x}
+    0.step0
+
+Enumerable オブジェクト
+  each
+  
+  collecut
+  select -> 条件を入れる
+  reject->selectの逆(false, nilを返した場合)
+  ingect
+
+ 参考： 
+ inject -> http://blog.toshimaru.net/ruby-inject/
+ yield -> http://www.oki-osk.jp/esc/ruby/tut-06.html
+
+enumable
+http://ref.xaio.jp/ruby/classes/enumerable
+
+このチャプターはけっこう難しい。
+ネットで調査する必要あり。
+
+次の「ブロック」に移ります。
+
+- ブロックについて あと1時間ちょいで記事投稿までやる
+これができなかったので、夜の勉強の時間でなんとかする。
+
+
+参考
+http://qiita.com/kidach1/items/15cfee9ec66804c3afd2 http://language-and-engineering.hatenablog.jp/entry/20101118/p1
+IHHI1
+ブロック -> メソッドの引数にしかなれない
+         -> 引数として渡されたブロックは、yieldによって実行される
+これと具体例をいくつか
+
+
+メソッド
+
+proc
+lambda
+クロージャ
+
+まずは、メソッドについての説明
+次に、procの説明、lambda、クロージャについての説明
+
+def fuga (s, len)
+  s[0,len]
+end
+
+fuga ("ruby", 2)
+
+http://qiita.com/kidach1/items/15cfee9ec66804c3afd2 
+http://language-and-engineering.hatenablog.jp/entry/20101118/p1
+http://www.eriktrautman.com/posts/ruby-explained-blocks-procs-and-lambdas-aka-closures
+解説が丁寧で、情報量も多かったです=>
+http://awaxman11.github.io/blog/2013/08/05/what-is-the-difference-between-a-block/
+すごくシンプルに概念を教えてくれました=>
+https://coderwall.com/p/_-_mha/four-types-of-ruby-closures-block-proc-lambda-and-method
+
+# 編集 H28.11.12 
+<p>lambdaとProcでは"return"そのものの扱い方が違う/p>
+[ruby]
+l = lambda{|a, b|...}
+l.call("A")
+#=> Error need to pass 2 arguments
+
+def_whats_your_name?
+  l = Proc.new{return "Karim"}
+  l.call
+  return "Rahim"
+end
+=> "karim"
+[/ruby]
+
+
+
+*****
+

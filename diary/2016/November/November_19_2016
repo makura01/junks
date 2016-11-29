@@ -1,0 +1,28 @@
+==========
+2016/11/19
+saturday
+「rubyによるデータ収集」
+==========
+
+15:00 ~ @starbucks
+
+[今日の目的]
+サイトを移動しながら、Rssクローリングをするクローラーを作る。
+-> ダメでした。普通に回答思いつかなかった。
+
+
+
+
+
+参考：
+crawler全体 
+http://ruby.bastardsbook.com/chapters/web-crawling/
+
+wgetを使う
+http://linuxreviews.org/quicktips/wget/
+http://stackoverflow.com/questions/273743/using-wget-to-recursively-fetch-a-directory-with-arbitrary-files-in-it
+
+使えそうな予感
+https://github.com/cardmagic/simple-rss/blob/master/README.markdown
+
+http://www.developer.com/services/article.php/3733171/Consuming-RSS-Feeds-with-Ruby.htm

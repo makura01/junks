@@ -1,0 +1,29 @@
+==========
+2016/11/15
+tuesday
+「ruby クローラー作成」
+==========
+
+14:30 ~ @starbucks
+
+
+
+wikipediaをcrawlしたい
+
+
+参考:
+
+nokogiri を嫌いにならないで 〜インストール時のエラーを乗り越えろ〜
+http://qiita.com/dskst/items/b1f073fcffeca3bc9fc6
+
+Writing a Web Crawler
+http://ruby.bastardsbook.com/chapters/web-crawling/
+
+Mac OS X Mavericksで”gem i nokogiri”失敗の解決方法
+http://qiita.com/t_732_twit/items/a7956a170b1694f7ffc2
+
+rbenvのsl対処
+http://qiita.com/MasahiroSakoda/items/b66f92df80b375f7c786
+
+
+http://qiita.com/muran001/items/14f34b735e0a6b4af98c

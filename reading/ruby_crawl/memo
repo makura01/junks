@@ -1,0 +1,8 @@
+
+
+<p>wgetを使いましょう</p>
+This chapter will walk through how to crawl various kinds of websites, and all of the methods will be much more complex than running wget. So why not just use wget?
+
+For simple sites, wget will suffice, especially if your goal is to only make a local copy for later parsing. But in order to do that parsing, you'll usually have to write some code using something like Nokogiri anyway.
+
+For more complicated scraping jobs, though, especially for sites that require user input, wget may not get everything that you need. There's quite a few tricks you can use to get the most out of wget, but at some point, that gets more complicated than just working in Ruby.
