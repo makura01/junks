@@ -1,0 +1,77 @@
+<h3>コントローラの基本</h3>
+<ul>
+  <li>コントローラには複数のアクションが含まれている</li>
+  <li>コントローラの名前につけ方には決まりがある</li>
+</ul>
+<h4>コントローラの命名規約</h4>
+<ul>
+  <li>コントローラクラス名          -> MembersController</li>
+  <li>コントローラのファイル名      -> members_Controller.rb</li>
+  <li> テンプレートのフォルダ名     -> app/view/members</li>
+  <li>テストスクリプトのフォルダ名  -> members_controller_test.rb</li>
+</ul>
+
+<h4>パラメータの取得</h4>
+<ul>
+<li>localhosi:3000/lesson/step1/Sato</li>
+<li>alhosi:3000/lesson/step1?name=Sato</li>
+</ul>
+
+<p>どちらの方法でも、</p>
+[ruby]render text: "こんにちは、#{params[:name]}さん"[/ruby]
+<p>のように取得することができます。</p>
+
+<p>params にはcontroller名とaction名も含まれています。</p>
+[ruby]render text: params[:controller] + "#" + params[:action]
+=> lesson#step2[/ruby]
+
+<h4>リダイレクション</h4>
+[ruby]
+def step1
+  redirect_to action: "step2"
+end
+
+def step2
+  render text: "step2に移動しました"
+end
+[/ruby]
+<p>step1のアクションを踏むと、step2に処理が渡させるため、ブラウザに表示される文字は => "step2に移動しました。"
+
+<h4>フラッシュ</h4>
+<p>Railsでリダイレクトを行う時は、同時にフラッシュという機能がよく使われます。フラッシュは、アクションとアクションの間で情報を受けわたす機能です。さっそく具体例を...。</h4>
+[ruby]
+def step3
+  flash[:noties] = "step4に移動します。"
+  redirect_to action: "step4"
+end
+[/ruby]
+[ruby]
+def step4
+  render text: flash[:notice]
+end
+[/ruby]
+
+<h4>アクション・コールバック</h4>
+<p>アクションが実行される前後には、決まりきった処理を行うことがよくあります。そんな時にはアクション・コールバックを一つのメソッドにまとめて記述できます。</p>
+
+<p>アクション・コールバックにはbefore_action, after_action, around_actionなどがありますが、今回ではbefore_actionを扱います。</p>
+
+<h5>before_actionを利用する手順</h5>
+<ol>
+  <li>アクション名と重ならないようにコールバックの名前を決める</li>
+  <li>コールバック名と同じ名前のプライベートメソッドをコントローラーに記述する</li>
+  <li>コントローラの中でbefore_actionの引数にコールバックの名前をシンボルで指定すaる</li>
+</ol>
+[ruby]
+before_action :set_message, only: :step5
+
+def step5
+  render text:@message
+end
+
+privage
+def set_message
+  @message = "こんにちは"
+end
+=> こんにちは
+[/ruby]
