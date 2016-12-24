@@ -1,0 +1,33 @@
+cakephp3 ダウンロード
+
+PJを作成
+composer create-project --prefer-dist cakephp/app my_app_name
+
+エラー
+the requested PHP extension intl is missing from your system.
+
+Homebrewにないか探す
+brew search /.*intl.*/
+homebrew/php/php70-intl
+を見つけたので、インストール。
+
+brew install homebrew/php/php70-intl
+
+php.iniのextensionをいじるとかいうサイトもありましたが、
+extension=/path/to/intl.so
+とかって書くと、module already loaded みたいなエラーが出ました。
+
+なので、そのままです。
+
+確認
+php -i | grep intl
+-> intlが表示される
+
+エラー解消
+
+
+
+
+Unable to load dynamic library '/usr/local/Cellar/php70/7.0.14_7/lib/php/extensions/no-debug-non-zts-20151012/php_intl.dll' - dlopen(/usr/local/Cellar/php70/7.0.14_7/lib/php/extensions/no-debug-non-zts-20151012/php_intl.dll, 9): image not found in Unknown on line 0
+http://stackoverflow.com/questions/41106324/magento-2-issue-with-composer
+試すも失敗

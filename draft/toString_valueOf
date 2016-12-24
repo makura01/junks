@@ -1,0 +1,264 @@
+Wed Dec 21 15:55:35 JST 2016
+
+title:
+[JS]toStringとvalueOfについて
+
+こんにちは、まくらです。
+今日も新都心から記事を届けています。
+
+<h3>はじめに</h3>
+<p>PCを友人に預けていたため、久しぶりの更新となります。
+今回はオライリーのjavaの本(通称：サイ本?)を読んでいて、
+わかりにくかった、toStringとvalueOfに関して、良記事を見つけたので、
+ほとんど和訳な感じですが、まとめたいと思います。</p>
+
+<p>今回まとめたいと思っているのはこの記事です。</p>
+
+<記事LINK>
+
+<p>すごくわかりやすく書かれているので、ぜひとも紹介したいと思いました。
+それでは、和訳に入ります。</p>
+
+<h3>Object-to-Primitive Conversions in java</h3>
+<p>他のオブジェクト志向言語と同様に、java(以後JS)はオブジェクトとプリミティブの変換方法を提供しており、それは特別なtoStringとvalueOfメソッドによって行われています。</p>
+
+<h5>Types and Primitives</h5>
+<p>この記事を理解するために、プリミティブとそうではないものの違いを知りましょう。JSでは5つのプリミティブが存在していて、様々なのプリミティブの値と関連しあっています。</p>
+<ul>
+<li>Null</li>
+<li>Undefined</li>
+<li>Number</li>
+<li>Boolean</li>
+<li>String</li>
+</ul>
+
+<p>他の全ての値はいずれもプリミティブではありません。配列、関数、普通のオブジェクトもです。もっと深く知るために、それぞれの場合に適応したtypeof演算子の結果は以下の通りです。</p>
+
+typeof null; // "object"
+typeof undefined; // "undefined"
+typeof 0; // "number" (`typeof NaN` is also "number")
+typeof true; // "boolean"
+typeof "foo"; // "string"
+typeof {}; // "object"
+typeof function () {}; // "function"
+typeof []; // "object"
+
+<p>これらの例が理解できたら、toStringとvalueOfの基本に進む準備ができました。すでに基本がわかっているのであれば、次の"How it workds"まで進んでしまってよいでしょう。</p>
+
+<h4>Basic Usage</h4>
+<p>これから国名と人口を持つpopulationオブジェクトを例に、説明していきます。では、始めましょう。</p>
+[java]
+
+function population(country, pop) {
+  return {
+      country: country,
+      pop: pop
+  };
+}
+
+var america_pop = population("USA", 350e6);
+var mexico_pop = population("Mexico", 200e6);
+var canada_pop = population("Canada", 200e6);
+[/java]
+
+[java]
+alert(america_pop); // [object Object]
+[/java]
+[java]
+var north_america_pop = america_pop + mexico_pop + canada_pop;
+[/java]
+[java]
+alert(north_america_pop); // [object Object][object Object][object Object]
+[/java]
+
+<p>上に書いたコードは動きますが、あまり具合がよくありません、私たちが本当に求めている結果は、最初のalert呼び出しで'[Population "USA" 350000000]'が表示され、二度目の呼び出しでは"750000000"が表示されることです。では、それをコード化しましょう。</p>
+
+<h5>toString</h5>
+<p>すべてのオブジェクトはObject.prototypeからtoStringメソッドを継承していて、[Object, Object]を返します。しかしながら、toStringメソッドを自分たちのメソッドあるいはプロトタイプとして提供することによって、簡単にオーバーライドできます。次の例では、それを直接それぞれのインスタンスに付与していますが、プロトタイプを代わりに使ってもいいでしょう。</p>
+[java]
+
+n population(country, pop) {
+  return {
+      country: country,
+          pop: pop,
+              
+          toString: function () {
+                        return "[Population " + 
+                                "\"" + country + "\" " +
+                                pop +
+                        "]";
+          }
+  }
+}
+
+var america_pop = population("USA", 350e6);
+[/java]
+[java]
+alert(america_pop); // [Population "USA" 350000000]
+[/java]
+
+<h5>valueOf</h5>
+<p>すべてのオブジェクトはObject.prototypeからvalueOfメソッドも継承していています。このメソッドは標準でオブジェクト自身を返しますが、オブジェクトからNumber型、あるいは他のプリミティブの値に自然に置き換えられるため、'+'のような演算子として使うことができます。上と同じように例をだして、考えてみましょう。</p>
+[java]
+function population(country, pop) {
+  return {
+      country: country,
+          pop: pop,
+              
+          toString: function () {
+                        return "[Population " + 
+                                "\"" + country + "\" " +
+                                pop +
+                        "]";
+          },
+                                                      
+          valueOf: function () {
+                      return pop;
+          }
+  };
+}
+
+var america_pop = population("USA", 350e6);
+var mexico_pop = population("Mexico", 200e6);
+var canada_pop = population("Canada", 200e6);
+[/java]
+[java]
+alert(america_pop); // [Population "USA" 350000000
+[/java]
+[java]
+var north_america_pop = america_pop + mexico_pop + canada_pop;
+[/java]
+[java]
+alert(north_america_pop); // 750000000
+[/java]
+<p>さあ、これでvalueOfメソッドを定義して、自分たちのpopulationオブジェクトが、数値型の人口を返すようになりました。</p>
+<h4>How It Works</h4>
+<p>javaのほとんどのものと同様に、toStringが呼ばれるプロセスはあなたが考えているほど単純ではありません。alertが呼ばれる時、何が起きているのか考えてみましょう。</p>
+<ol>
+<li>アラートは参照のGetValueを呼び出します。 これは、参照先のオブジェクトを返します</li>
+<li>アラートがToStringを呼び出します(これはそのオブジェクトのtoStringとは異なります)。</li>
+<li>ToStringがToPrimitiveを呼び出し、ヒントとしてStringを渡します。</li>
+<li>ToPrimitiveはそのオブジェクトの中の[[DefaultValue]]メソッドを呼び出し、ヒントとしてStringを使います。 </li>
+<li>[[DefaultValue]]はそのオブジェクトのtoStringプロパティーを呼び出します。</li>
+<li>toStringの結果はプリミティブなので、それらは全てチェインを辿ってToStringメソッドに返されます。</li>
+<li>結果は全てString型であるため、ようやく、toStringはalertに制御を戻します。</li>
+<li>alertがその値を表示します。</li>
+</ol>
+
+<p>※上記リストの和訳は自信がないため、適宜解釈していただけると幸いです(><)</p>
+
+<p>数が多いですが、それほど難しくはありません。しかしながら、もっと説明が必要で重要な機能はToPrimitiveメソッドでしょう。この関数は、任意の値を取得し、対応するプリミティブを取得するために使用されます。すでにプリミティブが入力されている場合、値は変換なしで返却されます。ただし、値がプリミティブでない場合、内部[[DefaultValue]]メソッドを呼び出してオブジェクトのデフォルト値を検索します。</p>
+
+<p>[[DefaultValue]]は、すべてのオブジェクトの内部プロパティです。これは任意のヒント、NumberかStringのどちらか、を取得するメソッドです。ヒントが与えられない場合は、DefaultでNumberになります。オブジェクトがDateである場合にはdefaultがStringになります(ばかげてますね)。このことが明らかになったら、toStringとvalueOfを順番に呼び出してプリミティブを見つけます。ここでヒントが出てきます。ヒントがNumberの場合、まずvalueOfが試されますが、Stringの場合はtoStringが最初に試されます。 それが以下に示すプロセスです：</p>
+
+<ol>
+<li>最初のメソッドが存在し、呼び出し可能な場合はそれを呼び出して結果を取得し、それ以外の場合は3にスキップします。</li>
+<li>1の結果がプリミティブであれば、それを返します</li>
+<li>2番目のメソッドが存在し、呼び出し可能な場合は呼び出して結果を取得し、そうでない場合は5にスキップします</li>
+<li>3の結果がプリミティブの場合は、それを返します。</li>
+<li>TypeError例外をスローします。</li>
+</ol>
+
+<p>[[DefaultValue]]によって返される値はプリミティブであることが保証されています。もしそうでないなら、TypeErrorが投げられるでしょう。これはまた、toStringとvalueOfはこのコンテキストで有用であるためにプリミティブを返さなければならないことを示唆しています。</p>
+
+<h5>Confusion About the + Operator</h5>
+<p>ここにおそらく予期しないであろう結果になる例を示します。</p>
+[java]
+var foo = {
+  toString: function () {
+      return "foo";
+  },
+  valueOf: function () {
+      return 5;
+  }
+};
+[/java]
+[java]
+alert(foo + "bar"); // 5bar
+[/java]
+[java]
+alert([foo, "bar"].join("")); // foobar
+[/java]
+
+<p>このコンテキストでは、+演算子を使用して文字列の連結を行っています。しかし、fooはtoStringを使って文字列に変換されず、valueOfを使って数値に変換され、文字列連結に使用されました。これはおそらく私たちが望むものではありませんが、実際そのように機能します。それは、計算と文字列の連結のための+演算子のオーバーロードの副作用です。+演算子は明確なプロセスを持っています：</p>
+<ol>
+<li>左辺を評価し、値を取得します。</li>
+<li>右辺を評価し、値を得る。</li>
+<li>左辺、右辺の両方でToPrimitiveを呼び出します（ヒントなし)。</li>
+<li>いずれかのプリミティブが文字列の場合は、7にスキップします。</li>
+<li>両方の値でToNumberを呼び出します。</li>
+<li>値の合計を返します。</li>
+<li>両方の値でToStringを呼び出します。</li>
+<li>両方の値の連結を返します。</li>
+</ol>
+
+<p>ヒントはToPrimitive呼び出しに渡されないので、デフォルトでNumberになります（デフォルトがStringのDateでない限り）。つまり、toStringではなくvalueOf関数が呼び出されます。プリミティブな値が取得された後で、インタプリタが文字列連結または算術演算を行うかどうかを決定するのではありません(?訳)。そのため、上記の例では、 "foobar"ではなく "5bar"が返されます。</p>
+
+<h5>Bad Stuff</h5>
+<p>これら全てにたった一つ本当にいけてない特徴があります。ToPrimitiveはプリミティブ以外の戻り値の型チェックを強制しません。 つまり、次のようなコードを書くことができます：</p>
+[java]
+var foo = {
+  toString: function () {
+      return 5;
+        },
+  valueOf: function () {
+      return "foo";
+  }
+};
+[/java]
+[java]
+alert(foo.toString() + 1); // 6 (bad!)alert(foo.toString() + 1); // 6 (bad!)
+[/java]
+[java]
+alert(foo + 1); // "foo1" (no good!)
+[/java]
+[java]
+alert(+foo); // NaN (the worst!)
+[/java]
+
+<p>valueOfメソッドはより普遍的であるため、型チェックをしなくても許容されます。適切なプリミティブ値を返せることを期待します。ただし、toStringメソッドにはそのような言い訳はありません。これは単に悪い特徴です。valueOfメソッドはより一般的であるため、型チェックをしないと許されます。 適切なプリミティブ値を返すことができると期待します。 ただし、toStringメソッドにはそのような言い訳はありません。 これは単に悪い特徴です。 もちろん、toStringを呼び出し,結果を文字列に変換するfoo.toString（）の代わりに、String（foo）を用いることで少しましになります。 しかし、必ずしもこれを行う必要はないし、念慮する必要もありません。ただ、単純に、文字列を返さないtoStringメソッドでオブジェクトを作成しないでください。</p>
+
+<h4>How About Performance?</h4>
+<p>これら,暗黙の変換に含まれる複雑性を理解した後、パフォーマンスにどのように影響するのか興味が出てきました。だから私は、主要なブラウザで1,000,000回以上[].join(obj)の反復を実行するのにかかる時間をテストすることにしました。私はオブジェクトを暗黙的に文字列にキャストして、そして私がtoStringメソッドを手動で呼び出したもの（つまり、[] .join（obj.toString（）））を使って、1つのテストを行いました。予想どおり、ほとんどの場合、明示的な呼び出しのほうが高速でした</p>
+
+<ul>
+<li>Firefox 3.6.2: 874ms vs. 320ms - almost 3x faster.</li>
+<li>Chrome 5: 94ms vs. 47ms - 2x faster.</li>
+<li>Opera 10.50: 155ms vs 182ms - a little slower.</li>
+<li>Safari 4: 409ms vs 280ms - almost 2x faster.</li>
+<li>nternet Explorer 8: 2856ms vs 2786ms - about the same</li>
+<li>Internet Explorer 9 (preview): 645ms vs 633ms - about the same.</li>
+</ul>
+
+<p>このパフォーマンステストから得た知見は、自動的に行うために必要な複雑な一連のメソッド呼び出しと比較をインタープリタに依存するのではなく、オブジェクトの型変換メソッドを直接呼び出すことが常にベストであるということでした。</p>
+
+<h4>How About Browser Support?</h4>
+
+<p>ECMAScript仕様の多くのものと同様に、これらのプロセスは複雑であり、すべてのブラウザが仕様通りにそれらを実装することに疑念を抱いていました。 したがって、以前のテストスイートでは、コンプライアンスチェックを追加しました。私はInternet Explorerのバージョンを少なくともIE5.5まで遡り、すべての主要なブラウザが、これらのメカニズムを正しく実装していることに非常に驚きました。開発者が文字列の代わりに数値を返すようなToStringを作成するようなときには、扱いにくい場合もありますが。すべてのブラウザが仕様に従ってコードを処理します。 これはすばらしいニュースです。</p>
+
+<p>しかし、この仕様では、1つ曖昧な領域が生じます.それはTopPrimitive関数のヒントがないことです。正確な文言はここにあります:<p/>
+
+<blockquote>
+Dateオブジェクトを除くすべてのネイティブECMAScriptオブジェクトは、ヒント番号が指定されたかのようにヒントの不在を処理します。 Dateオブジェクトは、hint Stringが指定されたかのように、ヒントの不在を処理します。 ホストオブジェクトは、他の何らかの方法でヒントの不在を処理することがあります。
+</blockquote>
+
+<p>標準で明示的にブラウザを脱することができることは憂慮です。このテストスイートには、ヒントがない場合、DateオブジェクトはデフォルトでStringになり、BooleanオブジェクトはデフォルトでNumberになるというチェックが含まれていました。すべてのブラウザもこのチェックに合格しました。つまり、この機能のすべてについてブラウザがサポートしていることは、一貫性があり正しいものです。</p>
+
+<h4>Conclusions</h4>
+<p>これらの仕組みがjavaでどのように振る舞うか理解することが有益であったことを望みます。記事から３つの重要点を取り上げます。</p>
+
+<ol>
+<li>一般的に再利用されるオブジェクトに対してtoStringとvalueOfを実装します。</li>
+<li>すべてのブラウザは、仕様に従ってオブジェクトからプリミティブへの変換を実装しているため、安全に詳細を調べることができます</li>
+<li>パフォーマンスが重要な場合は、javaの暗黙の呼び出しに頼るのではなく、常に型変換メソッドを直接呼び出してみてください。</li>
+</ol>
+
+<p>もし結果を確かめたいという場合は、この記事で使用されたテストスイートを見つけられるでしょう。場合に使用します。矛盾点を見つけたらぜひ教えてください。</p>
+
+<p>読んでくれてありがとう！ 質問やフィードバックがある場合は、下にコメントを残すか、直接私に連絡してください。</p>
+
+<h3>おわりに</h3>
+<p>以上が記事の和訳でした。途中からgoogle先生にお願いしながら、なんとか最後までやり通すことができました。綺麗な訳ではなかったし、僕の理解不足からよくわからない表現になってしまった箇所がかなりあったと思います。特にhintの意味合いが調べてもわからず、そのまま使用しています。もし改善するところがありましたら、コメントかtwitterなどでご連絡ください。宜しくお願いします。</p>
+
+まくら
+

@@ -4,34 +4,30 @@
 ==========
 
 [構成]
-  language   -> Ruby
-  frame-work -> RoR
-  web server -> nginx(これそもそもできるのか)
-  db server  -> mySQL or sqlite3
+  language   -> PHP
+  frame-work -> CakePHP
+  web server -> Apache 2.4
+  db server  -> mySQL
 
 [世界観]
- 1. コミュニーケーションを促進する(同じ傾向を持った作品から相手のプロファイルをみることができる)
- 2. とにかくsimpleな作品を作る。
- 3. 読書感想文(小学校の宿題のように)を投稿する。
- -> 読書感想文っていい世界観だよね。
- 4. UI/UXの勝負になったら確実に負ける。他のところで差別化しましょう。
+ 1. とにかくsimpleな作品を作る。
+ 2. 読書感想文を投稿する。
+ 3. review機能
 
 
 [外部要件]
-1. ユーザ管理
-2. 書籍管理
-3. amazon apiから情報を得る => 多分そういうAPIがあったはず
-4. twitter, facebookに公開できること
-5. 読書感想文の投稿
-6. サブカルぽいUI/UX
+1. 書籍管理
+2. amazon apiから情報を得る => 多分そういうAPIがあったはず
+3. twitter, facebookに公開できること
+4. 読書感想文の投稿
+5. サブカルぽいUI/UX
 
 [内部要件]
-1. USER 作成 編集 削除
-2. 書籍 登録(how?) 編集 削除
-3. amazon API に関して調査、結果に応じて、必要なデータも変わってくる。
-4. api規約に従って登録。ソーシャルボタンの設置
-5. 読書感想文の投稿...ちょっと考える余地があるかも。
-6. サブカルっぽいUI/UXとは何か
+1. 書籍 登録(how?) 編集 削除
+2. amazon API に関して調査、結果に応じて、必要なデータも変わってくる。
+3. api規約に従って登録。ソーシャルボタンの設置
+4. 読書感想文の投稿...ちょっと考える余地があるかも。
+5. サブカルっぽいUI/UXとは何か
 
 [スケジュール]
 
@@ -41,3 +37,27 @@
 このシャッフルにというところがみそ。
 だから一個あたりの文章はさらーっとtwitterにつぶやくのでは
 なく、なるべく長文を期待。
+
+[DB構成]
+--Book---------------
+  id PK AI
+  isbn VARCHAR
+  issn VARCHAR
+  name VARCHAR
+  photo VARCHAR
+  created DATE
+  updated DATE
+  delete_flag INT DEFAULT 0
+---------------------
+
+--impression----------
+id PK AI
+book_id FK
+description VARCHAR
+created DATE
+updated DATE
+delete_flag INT DEFAULT 0
+---------------------
+
+
+
