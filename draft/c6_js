@@ -1,0 +1,82 @@
+Tue Dec 27 20:37:22 JST 2016
+サイ本6章オブジェクトに関する記事でーす。
+後から自分が参照できるようになるべくチートシート的にまとめます。
+
+Title: JSのオブジェクトについてまとめ
+
+
+オブジェクトの生成
+
+  new を使う方法
+
+    //クラス定義
+      var Person = function() {};
+      
+    //インスタンスの生成
+      ex. var person1 = new person();
+
+  オブジェクトリテラルを使う方法
+
+    // プロパティを2つ持つオブジェクト
+    var point = {x:0, y:0}
+
+プロパティ属性
+  プロパティは名前と値の他にプロパティ属性と呼ばれる値を持ちます。以下はその例です。
+    書き込み可(writable)属性   -> プロパティ値を設定できるかどうかを指定します
+    列挙可(enumerable)属性     -> for/inループでプロパティ名を調べられるようにするかを決めます
+    再定義可(configurable)属性 -> プロパティを削除できるかどうか、属性を変更できるかどうかを指定します
+
+オブジェクト属性
+  オブジェクトは、プロパティの他に以下の3つのオブジェクト属性を持ちます。
+    オブジェクトのプロトタイプ              -> プロパティの継承元となるオブジェクトへの参照
+    オブジェクトのクラス                    -> オブジェクトの型を表す文字列
+    オブジェクトの拡張可(exxtensible)フラグ -> (ECMAScript5のみ)オブジェクトに新しいプロパティを追加できるかチェック
+
+プロトタイプとは？
+  すべてのJavaScriptオブジェクトはあるオブジェクトが関連づけられています。これをプロトタイプと呼びます。オブジェクトはこのプロトタイプのプロパティを継承します。
+  オブジェクトリテラルを使って生成したオブジェクトは全て、同じプロトタイプを持ちます。これはObject.prototypeとして参照できます。new Object()で生成されたオブジェクトは同様にObject.prototypeで参照可能です。new Array() という式で生成されたオブジェクトはArray.prototypeとnew Date()という式で生成されたオブジェクトはArray.prototypeを使用し、また、Object.prototypeからもプロパティを継承します。このように関連づけられた一連のプロトタイプオブジェクトを、プロトタイプチェーンと呼びます。
+
+プロパティの削除
+  // bookオブジェクトのauthorプロパティがなくなる
+  delete book.author;
+
+ある名前のプロパティをオブジェクトが持っているかテストする
+
+  var o = { x: 1 };
+  // inを使う方法
+    "x" in o; // true: oは独自プロパティxを持つ
+    "y" in o; // false: oはプロパティyを持たない
+    "toString" in o; // true: oはtoStringプロパティを継承する
+
+  // hasOwnProperty()メソッドを使う方法
+    o.hasOwnProperty(x); // true: oは独自プロパティxを持つ
+    o.hasOwnProperty(y); // true: oはプロパティyを持たない
+    o.hasOwnProperty("toString"); // false: toStringは継承プロパティ
+
+  hasOwnPropertyの結果を更に絞り込みます
+
+  // inherit()は、プロトタイプオブジェクトpからプロパティを継承する新たなオブジェクトを返します。
+  // EMCScript 5 仕様の関数であるObject.create()が定義されていれば使用し、
+  // 定義されていなければ古くから存在する方法を使います
+  function inherit(p) {
+    if (p == null) throw TypeError(); // pがnullではないオブジェクトか確認
+    if (Object.create)  //Object.createがが定義されていれば、
+      return Object.create(p); // 使う
+    var t = typeof p; // 定義されていなければ、型チェックを行う
+    if (t !== "object" && t !== function) throw TypeError();
+    function(){}; //ダミーのコンストラクタ関数を定義する
+    f.prototype = p; //prototype プロパティにpを設定する
+    return new f();
+  }
+
+  // 独自プロパティかつ列挙可属性がTrueの場合propertyIsEnumerable はtrueを返します
+  var o = inherit({y: 2})
+  o.x = 1;
+  o.propertyIsEnumerable("x"); // true: oは列挙可能のプロパティxを持つ
+  o.propertyIsEnumerable("y"); // false: yは継承プロパティ、独自プロパティではない
+  Object.prototype.propertyIsEnumerable("toString"); // false: 列挙可能ではない
+
+
+
+ 
+

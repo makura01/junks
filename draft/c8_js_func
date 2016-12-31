@@ -1,0 +1,544 @@
+Wed Dec 28 19:51:34 JST 2016
+サイ本の8章 "関数"を記事にするよー
+ページ数が45pくらいありそうなので、
+全体的にすっきりとまとめる方針
+#説明は少なく具体例を多くする。 -> これは全ての記事に対する方針になるかもしれない
+
+title: JavaScript 「関数」まとめ
+
+まくらです、こんばんわ。
+
+<h3>はじめに</h3>
+<p>今回はJavaScriptの「関数」に関する記事を書きました。テーマがすごく広範なため、全体的に文章のボリュームも多くなっていて、読むのも大変かと思いますが、どうぞよろしくお願いします。</p>
+
+<h3>本文</h3>
+<p>JavaScriptでは、関数はオブジェクトですので、プログラムから操作できます。例えば、JavaScriptを使って関数を変数に代入したり、関数自体を別の関数に引数として渡したりkすることもできます。関数はオブジェクトなので、関数に対して、プロパティを設定したり、関数のメソッドを呼び出したりすることもできます。</p>
+
+<h4>関数の定義</h4>
+[javascript]
+// 階乗を計算する再帰関数
+function factorial(x) {
+  if (x <= 1) return 1;
+  return x * factorial(x - 1);
+}
+factorial(10); // 3628800
+
+// 関数式を変数に代入
+var square = function(x) {return x*x}
+square(5); // 25
+
+// 関数式に名前をつける(再帰関数の時に便利)
+var f = function fact(x) {if (x <= 1) return 1; else return x*fact(x-1);};
+f(5); // 120
+
+// 関数式を他の関数の引数として使う
+data.sort(function(a,b) {return a-b;});
+[/javascript]
+
+<h4>入れ子型の関数</h4>
+
+[javascript]
+function hypotenuse(a,b) {
+  function square(x) {return x*x}
+  return Math.sqrt(square(a) square(b));
+}
+[/javascript]
+<p>入れ子型関数は、この関数を入れ子にしている関数の仮引数や変数にアクセスできます。例えば、上述したコードでは、内部関数square()関数は外側の関数hypotenuse()関数の仮引数a,bを読み書きできます。関数宣言文はループ、条件文、try/catch/finally,with文中には記述できません。</p>
+
+<h4>関数の呼び出し</h4>
+<p>JavaScriptの関数は次の4つの方法で呼び出すことができます</p>
+<ul>
+  <li>関数として</li>
+  <li>メソッドとして</li>
+  <li>コンストラクタとして</li>
+  <li>call()メソッドやapply()メソッドを使って間接的に</li>
+</ul>
+
+<h5>関数呼び出し</h5>
+[javascript]
+// 関数として呼び出す例
+printprops({x:1});
+var total = distance(0,0,2,1) + distance(2,1,3,5);
+var probability = factorial(5)/factorial(13)
+[/javascript]
+
+<h5>メソッド呼び出し</h5>
+<p>メソッドとは、オブジェクトのプロパティに保存されたJavaScript関数のことです。</p>
+[javascript]
+var calculator = { // オブジェクトリテラル
+  operand1: 1,
+  operand2: 2,
+  add: function() {
+    //thisキーワードを使って、このオブジェクトを参照している
+    this.result = this.operand1 + this.operand2;
+  }
+};
+calculator.add(); // 1+1を計算する
+calculator.result // 2
+[/javascript]
+
+[javascript]
+// []を使った呼び出し
+o["m"](x,y); o.m(x,y)と同じ
+a[0](z) // a[0]が関数の場合メソッド呼び出し
+[/javascript]
+
+[javascript]
+// 複雑なプロパティアクセス式
+customer.surname.toUpperCase(); //customer.surnameに対してメソッドを呼び出す
+f().m(); // f()の戻り値に対してメソッドm()を呼び出す
+[/javascript]
+
+[javascript]
+// 同じ処理をしていたとしても前者のほうがわかりやすい
+rect.setSize(width,height);
+setRectSize(rect,width,height)
+[/javascript]
+
+[javascript]
+// メソッドチェーン
+// すべてのヘッダを検索し、IDをマップし、配列に変換し、ソートする。
+$(":header").map(function() {return this.id}).get().sort();
+[/javascript]
+
+[javascript]
+// thisのスコープ
+var o = {
+  m: function() {
+    var self = this;
+    console.log(this===o); // true
+    f(); // 関数f()をここで呼び出す
+
+    function f() {
+      console.log(this===o); //false: thisはグローバルまたはundefined
+      console.log(self === o); // true: selfは外側の関数のthisの値
+    }
+  }
+};
+o.m();
+[/javascript]
+
+<h5>コンストラクタ呼び出し</h5>
+<p>関数呼び出しやメソッド呼び出しの前にnewキーワードを記述すると、コンストラクタ呼び出しになります。コンストラクタに引数を指定しない場合、コンストラクタ呼び出しから引数リストと括弧を省略してもよいことになっています。</p>
+[javascript]
+// 以下2つは同じ意味
+var o = new Object();
+var o = new Object;
+[/javascript]
+
+<h5>間接的な呼び出し</h5>
+<p>JavaScriptの関数はオブジェクトです。すべてのJavaScriptのオブジェクトと同じ用に、関数もメソッドを持ちます。このメソッドのうちcall()メソッドとapply()メソッドを使えば、関数を間接的に呼び出せます。詳細は後述します。</p>
+
+<h4>関数の引数と仮引数</h4>
+<p>これから、関数呼び出しのときに、宣言した仮引数よりも少ない引数で呼び出したり、宣言した仮引数よりも多い引数で呼び出したりした時に何が起こるかについて説明していきます。</p>
+
+<h5>省略可能な引数</h5>
+<p>宣言した仮引数よりも少ない数の引数でその関数を呼び出した場合は、値が省略された仮引数にはundefined値が設定されます</p>
+[javascript]
+// オブジェクトoのプロパティの名前を配列aの要素に追加し、配列aを返す。
+// aが省略された場合は、新たに配列を生成し、この配列を返す。
+function getPropertyNames(o, /*省略可*/ a) {
+  if (a === undefined) a = [];
+  for (var property in o) a.push(property);
+  return a;
+}
+var a = getPropertyNames(o); 
+getPropertyNames(p,a); // pのプロパティをa配列に追加する
+
+a = a || []; // 上記の関数内のif文はこれでも構わない
+[/javascript]
+
+<h5>可変長の引数リスト(Argumentsオブジェクト)</h5>
+<p>仮引数よりも多い数の引数で関数が呼び出された場合、名前が付いてない値を直接参照する方法がありません。この問題を解決してくれるのが、Argumentsオブジェクトです。関数に渡された引数値はarguments[]配列の要素に格納され、数値インデックスで参照できます。引数xを持つ関数fを定義すると、その関数内では、引数の値がarguments[0]と同じ値になります。関数fに1つではなく2つの引数を渡すと、２番目の引数はその関数内で特定の名前を持ちませんが、arguments[1]として参照できます。argument.lengthで、呼び出し時に渡された引数の個数を参照できます。</p>
+
+[javascript]
+function f(x,y,z) {
+  // 渡された引数の個数を最初にチェックする
+  if (arguments.length != 3) {
+    throw new Error ("function f called with " + arguments.length + "argumennts, but it expects 3 arguments.");
+  }
+}
+[/javascript]
+<p>argumentsオブジェクトをうまく使うと、任意の個数の引数に対して処理を行う関数を記述できます。</p>
+[javascript]
+function max (/*...*/) {
+  var max = Number.NEGATIVE_INFINITY;
+  // すべて引数を調べて最大値を見つける
+  for (var i = 0; i < arguments.length; i++)
+    if (arguments[i] > max) max = arguments[i];
+  // 最大値を返す
+  return max;
+}
+
+var largest = max (1,10,100,2,3,1000,4,5,10000,6); // 10000
+[/javascript]
+
+<h5>引数としてオブジェクトのプロパティを利用</h5>
+<p>関数の仮引数が3つ以上になると、引数の順序を間違えることが多くなります。引数を名前/値のペアで渡せるようにすれば、関数を使うたびにドキュメントを調べるような苦労をしなくて済むようになります。この形式で関数を呼び出せるようにするには、引数としてオブジェクトを1つだけ受け取るように関数を定義し、関数を呼び出す場合には、オブジェクトリテラルを使って名前/値のペアを定義し、関数に渡します。この形式の関数定義と関数呼び出しの例を以下に示します。なお、この例では、引数が省略された場合にデフォルト値を利用するようにしています。</p>
+[javascript]
+function arraycopy (from,
+                    from_start,
+                    to,
+                    to_start,
+                    length
+                   )
+{
+  // ここにコードを記述
+}
+// from_startとto_startのデフォルト値は0
+function easycopy(args) {
+  arraycopy(args.from,
+            args.from_start || 0, // デフォルト値を設定
+            args.to,
+            args.to_start || 0,
+            args.length);
+}
+
+var a = [1,2,3,4], b = [];
+easycopy ({from:a, to:b, length:4});
+[/javascript]
+
+<h5>引数の型</h5>
+<p>JavaScriptメソッドの仮引数に対して型を宣言することはできません。次の例では、型チェックを行う関数を紹介します。</p>
+[javascript]
+// 配列 aの要素の総計を返す。  
+// aの要素は数値でなければならない。ただし、nullやundefined値の要素は無視する
+function sum(a) {
+  if (isArrayLike(a)) {
+    var total = 0;
+    for (var i = 0 i < a.length; i++) { // すべての要素を巡回する
+      var element = a[i];
+      if (element == null) continue; // nullやundefinedはスキップする
+      if (isFinite(element)) total += element;
+      else throw new Error ("sum(): elements must be finite numbers";
+    }
+  }
+  else throw new Error ("sum(): argument must be array-like");
+}
+[/javascript]
+
+<p>JavaScriptは非常に柔軟性に富んだ、片付けの弱い言語なので、引数の個数や型に柔軟に対応する関数が記述できます。このような関数の例として、flexisum()巻数を紹介します。</p>
+[javascript]
+function flexisum(a) {
+  var total = 0;
+  for (var i = 0; i < arguments.length; i++) {
+    var element = arguments[i],n;
+    if (element == null) continue; // nullやundefined値の引数は無視する
+    if (isArray(element))  // 引数が配列の場合
+      n = flexisum.apply(this,element); // 再帰的に総和を計算する
+    else if (typeof element === "function")  // 関数の場合
+      n = Number(element()); // 関数を呼び出して変換する
+    else n = Number(element); // 数値に変換する
+
+    if(isNaN(n)) // 数値に変換できない場合は、エラーをスローする
+      throw Error("flexisum(): can't convert ! " + element + "to number");
+    total += n;
+  }
+  return total;
+}
+[/javascript]
+
+<h4>値としての関数</h4>
+<p>JavaScriptの関数は値としても使えます。例えば、変数に代入したり、オブジェクトのプロパティや配列の要素に格納したり、他の関数に渡したりなんでもできるのです。</p>
+[javascript]
+function square(x) {return x*x}
+
+// squareは変数名のようなもの
+var s = square;
+square(4); // 16
+s(4) // 16
+
+// オブジェクトのプロパティにもできる
+var o = {square: function(x){return x*x}}; // オブジェクトリテラル
+var y = o.square(16); // 256
+
+// 関数を配列の要素に格納
+var a = [function(x) {return x*x}, 20]; // 配列リテラル
+a[0](a[1]) //400
+
+// 簡単な関数をいくつか定義
+function add(x,y) {return x + y;}
+function subtract(x,y) {return x - y;}
+function multiply(x,y) {return x * y;}
+function divide(x,y) {return x / y;}
+
+// 上記の関数のいずれか1つを引数に取り、
+// それを他の2つの引数を使って呼び出す関数を定義する
+function operate(operator, operand1,operand2) {
+  return operator(operand1,operand2);
+}
+
+var i = operate(add, operate(add,2,3),operate(multiply,4,5)) // 25
+
+// これらの関数を関数リテラルで定義しなおして、
+// オブジェクトリテラルに格納する
+var operators = {
+  add: function add(x,y) {return x + y;,}
+  subtract: function subtract(x,y) {return x - y;},
+  multiply: function multiply(x,y) {return x * y;},
+  divide: function divide(x,y) {return x / y;},
+  pow: Math.pow
+};
+[/javascript]
+
+<h5>匿名関数</h5>
+[javascript]
+(function() {
+  // 処理
+}()); // 関数リテラルを定義し、すぐに呼び出す
+[/javascript]
+<p>同じ式の中で関数を定義し、すぐに呼び出す方法は非常によく使われます。今では慣用句になっています。先ほどんおコードでの括弧の使い方に注目してください。functionキーワードの前の開き括弧は必要です。もしも開き括弧がなければ、JavaScriptインタプリタはfunctionキーワードを、関数宣言文として解釈してしまいます。括弧を記述することで、インタプリタは、この式を正しく関数定義式と認識できるようになります。定義後すぐに呼び出す関数を括弧で囲むのも慣用句となっており、必要がないときでも括弧で囲まれることが多くなります。</p>
+
+<h4>クロージャ</h4>
+<p>関数オブジェクトと、関数の変数の名前解決に使われるスコープを組み合わせたものを、コンピューターサイエンスの分野ではクロージャと呼んでいます。</p>
+<p>入れ子型関数によるクロージャを使った協力なプログラミングテクニックが数多く存在します。また、JavaScriptプログラミングにおいて、このようなテクニックが一般的に使われるようになってきています。</p>
+
+[javascript]
+var scope = "global scope"
+function checkscope() {
+  var scope = "local scope"
+  function f() {return scope;}
+  return f();
+{
+checkscope() // "local scope"
+
+var scope = "global scope"
+function checkscope() {
+  var scope = "local scope"
+  function f() {return scope;}
+  return f;
+{
+checkscope()() // "local scope"
+[/javascript]
+
+<p>クロージャは、ある関数呼び出し時のローカル変数を閉じ込めるので、ローカル変数をプライベート変数のように使えます。</p>
+[javascript]
+var uniqueInteger = (function() { // 定義して呼び出す
+                      var counter = 0; // 関数のプライベートな状態
+                      return function() {return counter++;};
+                    }());
+
+uniqueInteger(); // 0
+uniqueInteger(); // 1
+uniqueInteger(); // 2
+[/javascript]
+<p>入れ子型の関数は、スコープ中の変数にアクセスできます。つまり、外側の関数で定義されたcounter変数にもアクセスできます。</p>
+
+<p>2つ以上のクロージャから同じプライベート変数にアクセスすることもできます。同じ外側の関数中で複数の入れ子型の関数を定義して、同じスコープチェーンを共有するだけです。</p>
+[javascript]
+function counter() {
+  var n = 0;
+  return {
+    count: function() {return n++;},
+    reset: function() {n = 0;}
+  }
+}
+
+var c = counter(), d = counter();
+c.count() // 0
+d.count() // 0
+c.reset() // reset()とcount()メソッドは状態を共有している
+c.count() // 0
+d.count() // 1
+[/javascript]
+
+<p>ここで紹介したクロージャの使い方と、プロパティのゲッターメソッドとセッターメソッドを組み合わせることもできます。</p>
+[javascript]
+function counter(n) { // 関数引数nがプライベート変数になる。
+  return {
+    // ゲッターメソッドはプライベートのカウンタ変数を返し、インクリメントする
+    get count() {return n++;}
+    // セッターメソッドはnの値が小さくならないようにする。
+    set count(m) {
+      if (m >= n) n = m;
+      else throw Error("count can only be set to a larger value");
+    }
+  };
+}
+
+var c = counter(1000);
+c.count // 1000
+c.count // 1001
+c.count = 2000
+c.count // 2000
+c.count = 2000 // エラー！
+[/javascript]
+<p>ここで紹介したcounter()関数は、ローカル変数を宣言していません。その代わりに、仮引数nを使って、内部状態を管理します。そして、この内部状態をプロパティアクセサメソッドで共有します。このようにすることで、counter()を呼び出す時に、プライベート変数の初期値をしていできるようにもなります。</p>
+
+<h4>関数のプロパティとメソッドとコンストラクタ</h4>
+<h5>call()メソッドとapply()メソッド</h5>
+<p>call()メソッドとapply()メソッドを利用すると、あるオブジェクトのメソッドであるかのように関数を間接的に呼び出すことができます。最初の引数は、これから呼び出す関数の対象となるオブジェクトで、この引数が呼び出しコンテキストとなり、関数の本体のthisキーワードの値になります。。関数f()をオブジェクトoのメソッドとして呼び出すには、次の例のようにcall()メソッドまたはapply()メソッドを使います。</p>
+[javascript]
+f.call(o);
+f.apply(o);
+
+f.call(o,1,2);
+f.apply(o,[1,2]) // 引数は配列
+
+var biggest = Math.max.apply(MATH, array_of_nunber); // 最大値を求める
+[/javascript]
+
+<p>apply()メソッドに指定できるのは本当の配列だけでなく、配列のようなオブジェクトを指定しても問題ありません。現在実行中の関数に渡されたarguments配列を、そのままapply()メソッドに渡すことで、まったく同じ引数で関数を呼び出すことができます。</p>
+[javascript]
+// オブジェクトoのメソッドmを置き換えて、元のメソッドを呼び出す前と、
+// 呼び出した後のメッセージをログに残すようにする
+function trace(o,m) {
+  var original = o[m]; // 元のメソッドをクロージャ中に保存する
+  o[m] = function() {
+    console.log(new Date(),"Entering:", m); // メッセージをログに残す
+    var result = original.apply(this, arguments); // 元のメソッドを呼び出す
+    var console.log(new Date(), "Exiting:", m); // メッセージをログに残す
+    return result;
+  };
+}
+[/javascript]
+
+<h5>bind()メソッド</h5>
+<p>ECMAScript5では、bind()メソッドが追加されました。名前からもわかるように、bind()メソッドは、オブジェクトに関数をbindします。</p>
+[javascript]
+function f(y) {return this.x + y;} // この関数をバインドする
+var o = {x: 1}; // バインドされるオブジェクト
+var g = f.bind(o); // g(x)と呼び出すと、o.f(x)が呼び出される
+g(2); // 3
+g(5); // 6
+[/javascript]
+
+<p>bind()に渡された引数のうち、最初の引数はthisの値にバインドされ、2番目行こうの引数は関数の引数にバインドされます。部分適用は関数型プログラミングでは広く使われている方法です。カリー化と呼ばれることもあります。</p>
+[javascript]
+var sum = function(x,y) {return x + y;}
+// sumおような新しい関数を作成する。ただし、thisの値はnullにバインドし、
+// 最初の引数は1にバインドする。新しい関数に渡される引数は1つになる。
+var succ = sum.bind(null, 1);
+succ(2) // 3: xは1にバインドされ、yは引数として渡した2にバインドされる
+
+function f(y,z) {return this.x + y + z};
+var g = f.bind({x:1},2); // thisの値とyをバインドする
+g(3) // 6: this.xは1に、yは2に、zは3にバインドされる
+[/javascript]
+
+<h5>Function()コンストラクタ</h5>
+<p>Function()コンストラクタでも関数を定義できます。</p>
+[javascript]
+var f = new Function("x", "y", "return x*y;");
+// 上のコードと同じ
+var f = function(x,y) {return x*y;}
+[/javascript]
+<p>
+Function()コンストラクタには、文字列引数をいくつでも指定できます。最後に指定した引数が関数の本体です。
+</p>
+
+<h4>関数型プログラミング</h4>
+<p>JavaScriptは関数型プログラミング言語ではありませんが、関数をオブジェクトとして操作できるので、関数型プログラミングのテクニックを使うことができます。特に、map()やreduce()などのeCMAScript5の配列メソッドは、関数型言語のプログラミングを基にしています。/p>
+<h5>関数による配列の処理</h5>
+<p>数値の配列があり、平均や標準編を計算する方法を非関数型言語のプログラミングスタイルで実装すると以下のようになります。</p>
+[javascript]
+var data = [1,1,3,5,5];
+// 平均を求める
+var total = 0;
+for (var i =0; i < data.length; i++) total+= data[i];
+var mean = total/data.length; // 平均は3
+
+// 標準偏差を求める
+total = 0;
+for (var i =0; i < data.length; i++) {
+  var deviation = data[i] - mean;
+  total += deviation * deviation;
+}
+var stddev = Math.sqrt(total/(data.length-1)); // 標準偏差は2
+[/javascript]
+
+<p>同じ計算をmap()とreduce()を使って、関数型スタイルで書き直すと以下のようになります。</p>
+[javascript]
+// 最初に、単純な関数を2つ定義する
+var sum = function(x,y) {return x+y};
+var square = function(x) {return x*x};
+
+// 次に、先ほどの関数と配列メソッドを使って、平均と標準偏差を求める
+var data = [1,1,3,5,5];
+var mean = data.reduce(sum)/data.length;
+var deviations = data.map(function(x) {return x-mean});
+var stddev = Math.sqrt(deviations.map(square).reduce(sum)/(data.length-1));
+[/javascript]
+
+<h5>高階関数</h5>
+<p>高階関数は、関数に対して処理を行う関数のことです。引数として、1つ以上お関数を受け取り、新たな関数を返します。</p>
+[javascript]
+// この高階関数は新しい関数を返す。この新しい関数は引数をfに渡して、
+// fの戻り値を論理否定した値を返す。
+function not(f) {
+  return function() {
+    var result = f.apply(this,arguments);
+    return !result;
+  };
+}
+
+var even = function(x) {  // 数値が偶数かどうかを判定する
+  return x % 2 === 0;
+};
+
+var odd = not(even); // その反対の処理をする新しい関数
+[1,1,3,5,5].every(odd); // true: この配列のすべての要素は奇数
+[/javascript]
+<p>not()関数は高階関数でした。引数として関数を受け取り、関数を返しているからです。</p>
+<p>別の例として、次に紹介するmapper()関数をみてください。引数として関数を受け取り、この関数を使って、ある配列を別の配列にマップする新たな関数を返します。</p>
+[javascript]
+// 引数として、配列を受け取り、各要素に対してfを呼び出し、
+// 戻り値の配列を戻す関数。
+function mapper(f) {
+  return function(a) {return map(a,f);};
+}
+
+var increment = function(x) {return x+1;};
+var incrementer = mapper(increment);
+incrementer([1,2,3]) // [2,3,4]
+[/javascript]
+
+<h5>関数の部分適用</h5>
+<p>関数fのbind()メソッドは指定したコンテキスト中で、指定した引数でfを呼び出す新しい関数を返します。つまり、関数をあるオブジェクトにバインドし、引数を部分適用しています。</p>
+
+[javascript]
+// 配列のようなオブジェクトを本当の配列に変換するユーティリティ関数
+// 次の関数を使って、argumentsオブジェクトを本当の配列に変換する。
+function array(a,n) {return Array.prototype.slice.call(a,n || 0);}
+
+// この関数に渡された引数は、左側から引数リストを埋めていく。
+function partialLeft(f /*,...*/) {
+  var args = arguments;
+  return function() {
+    var a = array(args,1);
+    a = a.concat(array(arguments));
+    return f.apply(this.a);
+  }
+}
+
+// この関数に渡された引数は、右側から引数リストを埋めていく。
+function partialRight(f/*, ...*/) {
+  var args = arguments;
+  return function() {
+    var a = array(arguments);
+    a = a.concat(array(args,1));
+    return f.apply(this,a);
+
+// この関数に渡された引数はテンプレートとなる
+// 引数リスト中のundefined値は、内側の関数の引数で埋められる
+function partial(f/*,...*/) {
+  var args = arguments;
+    return function() {
+      var a = array(args,1);
+      var i=0, j=0;
+      // 引数リストを巡回し、undefined値を内側の引数の値で置き換えていく
+      for(; i < a.length; i++)
+        if (a[i] === undefined) a[i] = arguments[j++];
+      // ここで内側の引数のうち残りのものを連結する
+      a = a.concat(array(arguments,j))
+      return f.apply(this,a);
+    };
+}
+
+[/javascript]
+
+<h3>おわりに</h3>
+<p>今回も前回(配列)と同じようにサイ本を参考にしながら関数についてまとめました。JavaScriptの関数は柔軟性がとても高くて、更に関数型のプログラミングスタイルを比較的実装しやすいため、とても奥が深いテーマだと思いました。まだまだ、理解が不十分なところが多いので、それらを少しずつ理解していき、JavaScript初心者の壁を破りたいと思います。</p>
+
+<h3>参考：</h3>
+

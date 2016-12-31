@@ -1,0 +1,303 @@
+Wed Dec 28 16:01:51 JST 2016
+サイ本7章の配列についてまとめるよー。
+
+<h4>配列とは</h4>
+  <p>JacaScriptの配列は動的なので、配列を生成する時に配列の大きさを指定する必要はありません。</p>
+  <p>処理系は配列を最適化するので、オブジェクトのプロパティよりも高速でアクセスできます。</p>
+  <p>配列はArray.prototypeからプロパティを継承します。それには、配列を操作するためのメソッドがたくさん用意されています。</p>
+
+<h4>配列の生成</h4>
+[javascript]
+var empty = [];
+var primes = [2, 3, 5, 7, 11];
+var misc = [1.1, true, "a",] // 異なる型でも構成可
+[/javascript]
+
+[javascript]
+var a = new Array(); // 引数なし
+
+var a = new Array(10); // 配列の長さを指定する
+[/javascript]
+
+<h4>配列の要素の追加と削除</h4>
+
+<h5>要素の追加</h5>
+[javascript]
+a = [];
+a[0] = "zero";
+a[1] = "one";
+=> Array [ "zero", "one" ]
+
+a = [];
+a.push("zero");
+a.push("one", "two")
+=> Array [ "zero", "one", "two" ]
+[/javascript]
+
+<h5>要素の削除</h5>
+[javascript]
+a = [1, 2, 3];
+delete a[1];
+1 in a // false
+a.length // 3: 配列の長さは変更されない
+[/javascript]
+
+<h4>配列の要素の巡回(forEach)</h4>
+[javascript]
+var data = [1,2,3,4,5];
+var sumOfSquares = 0;
+data.forEach(function(x) { // dataの各要素がこの関数に渡される
+  sumOfSquares +=　x*x;
+});
+sumOfSquares // 55
+[/javascript]
+
+<h4>配列のメソッド</h4>
+<h5>join() メソッド</h5>
+<p>Array.join() メソッドは、配列のすべての要素を文字列に変換し連結し、連結した文字列を返します。引数に区切り文字を指定します。指定がない場合は","区切りです。</p>
+[javascript]
+var a = [1, 2, 3];
+a.join(); // => "1,2,3"
+a.join(" "); // => "1 2 3"
+a.join(""); // => "123"
+var b = new Array(10);
+b.join('-');  // '---------': 9つのハイフンからなる文字列
+[/javascript]
+
+<h5>reverse() メソッド</h5>
+<p>Array.reverse() メソッドは、配列の要素の順番を逆にするときに使用します。</p>
+[javascript]
+var a = [1, 2, 3];
+a.reverse().join() // => "3,2,1": aは[3,2,1]になる
+[/javascript]
+
+<h5>sort() メソッド</h5>
+<p>Array.sort()メソッドは、配列の要素をソートする時に使用します</p>
+[javascript]
+var a = new Array("banana", "cherry", "apple");
+a.sort();
+var s = a.join(","); // => s == "apple, banana, cherry"
+[/javascript]
+<p>アルファベット順以外の順序でソートしたい場合は、sort()メソッドの引数に比較関数を指定します。</p>
+[javascript]
+var a = [33, 4, 1111, 222];
+a.sort() // アルファベット順: 1111,222,33,4
+a.sort(function(a,b) { // 数値順 4,33,222,1111
+  return a-b;
+});
+a.sort(function(a,b){return b - a}); // 数値の降順
+[/javascript]
+<p>上の例では匿名関数を使用しています。比較関数はここで1回しか使わないため、名前をつける必要がありません。</p>
+[javascript]
+a = ['ant', 'Bug', 'cat', 'Dog'];
+a.sort(); // 大文字小文字を区別するソート：['Bug', 'Dog', 'ant', 'cat']
+a.sort(function(s,t) {
+  var a = s.toLowerCase();
+  var b = t.toLowerCase();
+  if (a < b) return -1;
+  if (a > b) return 1;
+  return 0;
+});  // => ['ant', 'Bug', 'cat', 'Dog']
+[/javascript]
+
+<h5>concat() メソッド</h5>
+<p>Array.concatメソッドは、配列に要素を追加して、新たな配列を作成します。</p>
+[javascript]
+var a = [1,2,3];
+a.concat(4,5); // => [1,2,3,4,5]
+a.concat([4,5]); // => [1,2,3,4,5]
+a.concat([4,5],[6,7]); // => [1,2,3,4,5,6,7]
+a.concat(4,[5,[6,7]]); // => [1,2,3,4,5,[6,7]]
+[/javascript]
+
+<h5>slice()メソッド</h5>
+<p>Array.slice()メソッドは、指定された配列のサブ配列(スライス)を返します。返すスライス配列の先頭を1番目の引数で指定し、2番目の引数で配列の末尾を指定します。スライス配列には、1番目の引数で指定された要素から、2番目の引数で指定された要素(この要素は含まれない)までが書くのされます。引数が1つしか指定されなかった場合、配列要素の最後までがスライス配列に格納されます。指定された引数のどちらかが負数の場合、配列お最後からの早退１で、配列要素が指定されたものと解釈されます。例えば、-1は1番最後の要素のことです。</p>
+[javascript]
+var a = [1,2,3,4,5];
+a.slice(0,3); // [1,2,3]
+a.slice(3); // [4,5]
+a.slice(1,-1) // [2,3,4]
+a.slice(-3,-2) // [3]
+[/javascript]
+
+<h5>splice()メソッド</h5>
+<p>Array.spliceメソッドは、配列に要素を挿入したり、配列から要素を削除したりする汎用的なメソッドです。</p>
+[javascript]
+var a = [1,2,3,4,5,6,7,8];
+a.splice(4); // [5,6,7,8] : aは[1,2,3,4]になる
+a.splice(1,2); // [2,3] : aは[1,4]になる
+a.splice(1);  [4] : aは[1]になる
+[/javascript]
+<p>splice()メソッドに指定された最初の2つの引数は、削除する配列要素を指定するものです。そのあとに、引数が指定された場合は、1番目の引数で市営された１に挿入する要素になります。</p>
+[javascript]
+var a = [1,2,3,4,5,];
+a.splice(2,0,'a','b') // [1,2,'a','b',3,4,5]
+a.splice(2,2,[1,2],3); // [1,2,[1,2],3,3,4,5]
+[/javascript]
+
+<h5>push()メソッドとpop()メソッド</h5>
+<p>push()メソッドとpop()メソッドを使用すると、スタックと同じやり方で配列を操作できます。</p>
+[javascript]
+var stack = [];
+stack.push(1,2); // [1,2] : 2が返される
+stack.pop // [1] : 2が返される
+stack.push(3); // [1,3] : 2が返される
+stack.pop(); // [1] : 3が返される
+stack.push([4,5]); // [1,[4,5]] : 2が返される
+stack.pop(); // [1] : [4,5]が返される
+stack.pop(); // [] : 1が返される
+[/javascript]
+
+<h5>unshift()メソッドとshift()メソッド</h5>
+<p>pop()メソッドとpush()メソッドは、配列の最後の１で要素の出し入れをしますが、unshift()メソッドとshift()メソッドは、配列の先頭の位置で要素んお出し入れをします。</p>
+[javascript]
+var a = []; 
+a.unshift(1); // a:[1] 1が返される
+a.unshift(22); //a:[22,1] 2が返される
+a.shift(); // a:[1] 22が返される
+a.unshift(3,[4,5]); // a:[3,[4,5],1] 3が返される
+a.shift(); // a:[[4,5],1] 3が返される
+a.shift(); // a:[1] [4,5]が返される
+a.shift(); // a:[]  [1]が返される
+[/javascript]
+
+<h5>toStringメソッドとtoLocaleString()メソッド</h5>
+<p>JavaScriptでは、オブジェクトと同じく、配列にもtoString()メソッドがあります。配列を指定して、toString()メソッドを実行すると、必要に応じて配列の要素のtoString()メソッドが呼び出されて、個々の要素を文字列に変換し、ここの文字列をカンマ(,)で区切ったリストを出力します。なお、出力されたリストには、[]などの配列の区切り記号が含まれないことに注意してください。</p>
+[javascript]
+[1,2,3].toString() // '1,2,3'
+["a","b","c"].toString() // 'a,b,c'
+[1,[2,'c']].toString() // '1,2,c'
+[/javascript]
+<p>なお、引数を指定しないでjoin()メソッドを呼び出した場合も、同じ文字列が返されます。</p>
+<p>toString()メソッドのローカライズ版のtoLocaleString()メソッドを実行すると、配列の要素のtoLocaleString()メソッドを呼び出して、個々の要素を文字列に変換し、個々の文字列をロケール固有の区切り文字で区切ったリストを出力します。</p>
+
+<h4>ECMAScript5の配列メソッド</h4>
+<p>ECMAScript 5には、配列の巡回、マップ、フィルタリング、テスト、削除、検索用に9つの新しいメソッドが定義されています。ほとんどのメソッドは、最初の引数として関数を指定します。そして、配列の要素ごとに、(または、要素をいくつかまとめて)この関数を呼び出します。配列が疎の場合は、存在しない要素に対して関数は呼び出されません。多くの場合、呼び出される関数には3つの引数が渡されます。この3つの引数とは、配列要素の値と、配列要素のインデックス、配列自身です。この3つの引数のうち、最初の配列要素の値だけで十分な場合も多く、このような場合は、2番目や3番目の引数の値は無視できます。</p>
+
+<h5>forEach()メソッド</h5>
+<p>forEach()メソッドは、配列を巡回しながら、要素ごとに指定された関数を呼び出します。</p>
+[javascript]
+var data = [1,2,3,4,5];
+var sum = 0;
+data.forEach(function(value) {sum += value;}); 
+sum // 15
+
+// 各配列要素をインクリメントする
+data.forEach(function(v,i,a){a[i] = v + 1});
+data // [2,3,4,5,6]
+[/javascript]
+
+<h5>map()メソッド</h5>
+<p>map()メソッドは、配列の要素を1つずつ、指定した関数に引数として渡し、この関数から返された値を配列に格納し、この配列を返します。</p>
+[javascript]
+a = [1,2,3];
+b = a.map(function(x) {return x*x}; // b:[1,4,9]
+[/javascript]
+
+<h5>filter()メソッド</h5>
+<p>filter()メソッドは、配列の要素の部分集合となる配列を返します。filter()メソッドに指定した関数が述語になります。</p>
+[javascript]
+a = [5,4,3,2,1];
+smallvalues = a.filter(function(x){return x < 3}); // [2,1]
+everyother = a.filter(function(x,i) {return i%2 == 0}); // [5,3,1]
+[/javascript]
+<p>未定義値やnull値を持つ要素を取り除きたい場合、以下のようにします。</p>
+[javascript]
+a = a.filter(function(x){return x !== undefined && != null;});
+[/javascript]
+
+<h5>every()メソッドとsome()メソッド</h5>
+<p>every()メソッドとsome()メソッドは、配列に対して述語関数を適用します。</p>
+[javascript]
+a = [1,2,3,4,5];
+a.every(function(x) {return x < 10; }) // true: すべての値が < 10
+a.every(function(x) {return x % 2 === 0; }) //false: すべての値が偶数ではない
+
+a.some(function(x) {return x%2===0;}) true : aは偶数の要素を持つ
+a.some(isNAN) // false: aには数値以外の要素はない
+[/javascript]
+<p>every()メソッドもsome()メソッドも、戻り値が確定したところで、配列要素お巡回を停止します。</p>
+
+<h5>reduce()メソッドとreduceRight()メソッド</h5>
+<p>reduce()メソッドとreduceRight()メソッドは、引数で指定された関数を使って、配列の要素を組み合わせて1つの値を返します。</p>
+[javascript]
+var a = [1,2,3,4,5];
+var sum = a.reduce(function(x,y) {return x+y}, 0); // 値の合計
+var product = a.reduce(function(x,y) {return x*y}, 1); // 値の積
+var max = a.reduce(function(x,y) {return (x>y)?x:y;}); //最大値
+[/javascript]
+<p>reduce()メソッドには引数を2つ指定します。最初の引数として、簡約化処理を行う関数を指定します。簡約化関数は、何らかの方法で2つの値を組み合わせて1つの値にまとめ、このまとめた値を返します。先ほどの例では、2つの値を組み合わせて、加算したり、乗算したり、最大のものを選んだりしています。2番目の引数は省略可能ですが、指定した場合は、初期値として簡約化関数に渡されます。</p>
+<p>reduce()で使う関数は、forEachやmap()で使う関数とは異なるものになります。配列要素の値や、インデックス、配列は、それぞれ2番目、3番目、4番目の引数として渡されます。最初の引数は、これまでの簡約化処理の結果が渡されます。初期値を指定せずにreduce()メソッドを呼び出した場合は、配列の最初の要素が初期値として使われます。</p>
+<p>reduceRight()メソッドは、reduce()メソッドと同じような働きをします。異なるのは、配列を処理するときに、インデックスの小さいほうから大きい方ではなく、大きいほうから小さいほうに処理する点です。</p>
+[javascript]
+var a = [2,3,4];
+//2^(3^4)を計算する。
+var big = a.reduceRight(function(accumulator,value){
+  return Math.pow(value,accumulatar);
+});
+[/javascript]
+
+<h5>indexOf()メソッドとlastIndex()メソッド</h5>
+<p>indexOf()メソッドとlastIndexOf()メソッドは、配列中から、指定した値を持つ要素を探し、そのような要素が見つかったら最初に見つかったインデックスを返します。見つからなかった場合は-1を返します。indexOf()は、配列の先頭から末尾方向に検索します。一方で、lastIndexOf()メソッドは配列の末尾から先頭方向に検索します。</p>
+[javascript]
+a = [0,1,2,1,0];
+a.indexOf(1) // 1
+a.lastIndexOf(1) // 3
+a.indexOf(3) // -1
+[/javascript]
+
+<h4>配列の種類の判別</h4>
+[javascript]
+Array.isArray([]) // true
+Array.isArray({}) // false
+
+[] instanceof Array // true
+{} instanceof Array // false
+[/javascript]
+
+<h4>配列のようなオブジェクト</h4>
+<p>配列には、通常のオブジェクトにはない、以下のような特徴があります。</p>
+<h5>配列の特徴</h5>
+<ul>
+  <li>配列に新しい要素が追加されると、lengthプロパティが自動的に更新される。</li>
+  <li>lengthプロパティに現在の長さより小さな値を設定することで、配列を縮められる。</li>
+  <li>配列はArray.prototypeから便利なメソッドを継承する。</li>
+  <li>配列は"Array"というクラス属性を持つ</li>
+</ul>
+
+<h5>配列のようなオブジェクトとは</h5>
+<p>例えば、通常のオブジェクトに対して、lengthプロパティを設定し、対応する非負数の整数値のプロパティを持つようにしたものを配列として扱っても、特に問題はありません。このようなオブジェクトは実際に様々なコードで実装されています。配列に固有のメソッドなどは使用できませんが、通常の配列に対して、配列要素を調べるコードで、オブジェクトの配列要素も調べられます。つまり、多くの配列ようのアルゴリズムが、「配列のような」オブジェクトに対しても使えます。</p>
+<h5>Fuction.call()メソッド</h5>
+<p>配列のようなオブジェクトはArray.prototypeを継承しないので、配列メソッドを直接は呼び出せません。ただし、次のように、function.call()メソッドを使って、間接的に呼び出すことができます。</p>
+[javascript]
+var a = {"0":"a", "1":"b", "2":"c", length:3} // 配列のようなオブジェクト
+Array.prototype.join.call(a, "+") // "a+b+c"
+Array.prototype.slice.call(a, 0) // ["a", "b", "c"]: 本当の配列のコピー
+Array.prototype.map.call(a, function(x) {
+  return x.toUpperCase();
+}) // ["A","B","C"]
+[/javascript]
+
+<h4>配列としての文字列</h4>
+[javascript]
+var s = "test";
+s.charSt(0) // "t"
+s[1] // "e"
+typeof s // String
+Array.isArray(s) // false
+[/javascript]
+
+<p>文字列に対してインデックスを使って個々の文字にアクセスできる最大の利点は、[]が使えることです。このおかげで、コードが完結で読みやすくなり、効率的になります。さらに、文字列が配列のように振る舞うおかげで、文字列に対して汎用的な配列メソッドが使えます。</p>
+[javascript]
+s = "JavaScript"
+Array.prototype.join.call(s, " ") // "J a v a S c r i p t"
+Array.prototype.filter.call(s,
+  funciton(x) {
+    return x.match(/[^aeiou]/);
+  }).join("") // "JvScrpt"
+[/javascript]
+
+<h3>おわりに</h3>
+今回は配列固有の便利メソッドをたくさんお届けできてよかったと思います。内容の詳細は参考にしたサイ本に載っていますので、もしご興味の方がいれば、ご覧になって、損はないと思います。次は「関数」をテーマに記事をまとめる予定です。
+
+
